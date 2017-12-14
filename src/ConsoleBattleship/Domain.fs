@@ -6,5 +6,5 @@ type GameState = {
 }
 
 let intialState = {
-    Grid = Array.init 10 (fun y -> Array.init 10 (fun x -> " "))
+    Grid = Array.init 10 (fun y -> Array.init 10 (fun x -> if x = 1 then "X" else " "))
 }
