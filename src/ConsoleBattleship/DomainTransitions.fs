@@ -23,7 +23,7 @@ let processFire (input: string) (state: GameState) =
     match input with 
     | ParseRegex "([a-jA-J])([0-9])$" [CharAsIndex y; Integer x]-> 
         let newGrid = state.Grid
-        if state.Grid.[y].[x] = "X" then
+        if Array.contains (y, x) state.Ship.Positions then
             newGrid.[y].[x] <- "H"
         else
             newGrid.[y].[x] <- "M"
