@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "ConsoleBattleship", "ConsoleBattleship\ConsoleBattleship.fsproj", "{521E9E5C-F379-49EF-ACC1-7FC6631755CC}"
 EndProject
