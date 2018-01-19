@@ -21,3 +21,4 @@ let renderGame (state: GameState) =
             Console.Write(displayString + " ")
         Console.Write('\n')
     Console.WriteLine("--+-------------------- ")
+    if state.ShipSunk then Console.WriteLine("You sunk my battleship")

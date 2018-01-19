@@ -1,7 +1,5 @@
 ﻿module Domain
 
-open System
-
 type Ship = {
     Positions: (int * int) list
     Id: string
@@ -20,6 +18,7 @@ type NauticalSquare = {
 type GameState = {
     Grid : NauticalSquare [][] // Jagged array (Array of arrays)
     Ships: Ship list 
+    ShipSunk : bool
 }
 
 let intialState =
@@ -37,8 +36,8 @@ let intialState =
         let rec recer positions =
             match positions with
             | [] -> ()
-            | (x : int, y : int)::rest -> 
-                grid.[x].[y] <- {Hit= false; Contents = ShipSection(Id = ship.Id )}
+            | (y : int, x : int)::rest -> 
+                grid.[y].[x] <- {Hit= false; Contents = ShipSection(Id = ship.Id )}
                 recer rest
         recer ship.Positions
 
@@ -50,5 +49,6 @@ let intialState =
     {
         Grid = grid
         Ships = ships
+        ShipSunk =false
     }
 
