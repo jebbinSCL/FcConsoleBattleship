@@ -18,6 +18,5 @@ let rec gameCycle (state: GameState) =
 
 [<EntryPoint>]
 let main _ = 
-    Console.WriteLine("BATTLESHIP")
     gameCycle intialState
     0
