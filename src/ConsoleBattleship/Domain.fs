@@ -18,14 +18,16 @@ type NauticalSquare = {
 type GameState = {
     Grid : NauticalSquare [][] // Jagged array (Array of arrays)
     Ships: Ship list 
-    ShipSunk : Ship option
+    Wrecks: Ship list
+    LastShipSunk : Ship option
 }
 
-let intialState =
+let initialState () =
     let ships = 
         [ 
-            { Positions = [(1, 1); (1, 2) ; (1, 3) ]; Id= "HMS Tom" };
-            { Positions = [(3, 2); (3, 3) ; (3, 4) ]; Id= "HMS Sinking-Hewitt" }  
+            //{ Positions = [(1, 1); (1, 2) ; (1, 3) ]; Id= "HMS Tom" };
+            //{ Positions = [(3, 2); (3, 3) ; (3, 4) ]; Id= "HMS Sinking-Hewitt" }
+            { Positions = [(0, 0) ]; Id= "Poor man's Shek" }
         ] 
     let grid = Array.init 10 (fun _ -> Array.init 10 (fun x -> {Hit = false; Contents = Water}))
     //TODO make functional then update domainTransitions
@@ -53,6 +55,7 @@ let intialState =
     {
         Grid = grid
         Ships = ships
-        ShipSunk = None
+        LastShipSunk = None
+        Wrecks = []
     }
 

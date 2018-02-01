@@ -23,7 +23,9 @@ let renderGame (state: GameState) =
         Console.BackgroundColor <- ConsoleColor.Black
         Console.Write('\n')
     Console.WriteLine("--+-------------------- ")
-    match state.ShipSunk with
+    match state.LastShipSunk with
     | Some ship -> printfn "You sank %s " ship.Id
     | None -> ()
+    if state.Ships.Length = 0 then Console.WriteLine("YOU WIN!!!!!!!!! Press any key to restart")
+
         

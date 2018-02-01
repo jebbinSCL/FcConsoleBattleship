@@ -31,18 +31,26 @@ let processFire (input: string) (state: GameState) =
     | ParseRegex "([a-jA-J])([0-9])$" [CharAsIndex y; Integer x] -> 
         let target = {state.Grid.[y].[x] with Hit = true}
 
-        let newGrid = state.Grid
-        newGrid.[y].[x] <- target
+        let updatedGrid = state.Grid
+        updatedGrid.[y].[x] <- target
         
-        let shipSunk = 
+        let shipSunk, updatedWrecks, updatedShips = 
             match target.Contents with
             | ShipSection shipId -> 
                 let ship = getShip shipId state.Ships 
-                let isSunk = isShipSunk newGrid ship
-                if isSunk then Some ship else None
-            | Water -> None
-        
-        {state with Grid = newGrid; ShipSunk = shipSunk}
+                let isSunk = isShipSunk updatedGrid ship
+                if isSunk then 
+                    let ships = state.Ships |> List.filter (fun x -> x <> ship)
+                    Some ship, ship::state.Wrecks, ships
+                else 
+                    None, state.Wrecks, state.Ships
+            | Water -> None, state.Wrecks, state.Ships
+
+        {state with 
+            Grid = updatedGrid; 
+            LastShipSunk = shipSunk
+            Ships = updatedShips
+            Wrecks = updatedWrecks}
     | _ -> state
 
 let updateGameState (input: string) (state: GameState) = 

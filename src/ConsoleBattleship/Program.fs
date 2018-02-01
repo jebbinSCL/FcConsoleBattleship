@@ -8,15 +8,17 @@ open DomainTransitions
 let rec gameCycle (state: GameState) = 
     renderGame state
     let input = Console.ReadLine()
-    match input.Trim() with
-    | "exit" -> ()
-    | input -> 
+    match input.Trim(), state.Ships.Length = 0 with
+    | "exit", _ -> ()
+    | input, false ->
         state 
         |> updateGameState input
         |> gameCycle
+    | _, true ->
+        initialState () |> gameCycle
 
 
 [<EntryPoint>]
 let main _ = 
-    gameCycle intialState
+    initialState () |> gameCycle
     0
