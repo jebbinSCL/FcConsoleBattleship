@@ -23,5 +23,7 @@ let renderGame (state: GameState) =
         Console.BackgroundColor <- ConsoleColor.Black
         Console.Write('\n')
     Console.WriteLine("--+-------------------- ")
-    if state.ShipSunk then 
-        Console.WriteLine("You sank my battleship  ") 
+    match state.ShipSunk with
+    | Some ship -> printfn "You sank %s " ship.Id
+    | None -> ()
+        

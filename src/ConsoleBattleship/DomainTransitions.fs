@@ -34,12 +34,15 @@ let processFire (input: string) (state: GameState) =
         let newGrid = state.Grid
         newGrid.[y].[x] <- target
         
-        let didWeSinkAShip = 
+        let shipSunk = 
             match target.Contents with
-            | ShipSection shipId -> getShip shipId state.Ships |> isShipSunk newGrid
-            | Water -> false
+            | ShipSection shipId -> 
+                let ship = getShip shipId state.Ships 
+                let isSunk = isShipSunk newGrid ship
+                if isSunk then Some ship else None
+            | Water -> None
         
-        {state with Grid = newGrid; ShipSunk = didWeSinkAShip}
+        {state with Grid = newGrid; ShipSunk = shipSunk}
     | _ -> state
 
 let updateGameState (input: string) (state: GameState) = 
