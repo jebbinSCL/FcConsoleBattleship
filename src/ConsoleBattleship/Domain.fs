@@ -1,5 +1,7 @@
 ﻿module Domain
 
+open System
+
 type Ship = {
     Positions: (int * int) list
     Id: string
@@ -22,14 +24,30 @@ type GameState = {
     LastShipSunk : Ship option
 }
 
+let generateRandomPosition (nextInt) = 
+    (nextInt(),nextInt())
+
+let generateRandomShip (nextInt) (length: int) (name: string)  = 
+    let startPos = generateRandomPosition nextInt 
+    { Positions = [startPos]; Id = name}
+        
 let initialState () =
+    let gridSize = 10
+    let rand = Random()
+    let nextInt ()  =  rand.Next(0, gridSize)
+
+    let generateShipInGrid = generateRandomShip nextInt
+
     let ships = 
         [ 
             //{ Positions = [(1, 1); (1, 2) ; (1, 3) ]; Id= "HMS Tom" };
             //{ Positions = [(3, 2); (3, 3) ; (3, 4) ]; Id= "HMS Sinking-Hewitt" }
-            { Positions = [(0, 0) ]; Id= "Poor man's Shek" }
+            //{ Positions = [generateRandomPosition(gridSize) ]; Id= "Poor man's Shek" }
+            generateShipInGrid 1 "Random1"
+            generateShipInGrid 1 "Random2"
+            generateShipInGrid 1 "Random3"
         ] 
-    let grid = Array.init 10 (fun _ -> Array.init 10 (fun x -> {Hit = false; Contents = Water}))
+    let grid = Array.init gridSize (fun _ -> Array.init gridSize (fun x -> {Hit = false; Contents = Water}))
     //TODO make functional then update domainTransitions
     // Talk about function first programming and functional - imperative spectrum 
     (*
