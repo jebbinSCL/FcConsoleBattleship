@@ -7,6 +7,7 @@ let letters = [|'A'..'J'|] |> Array.map string
 
 let renderGame (state: GameState) = 
     Console.Clear()
+    state.Ships |> List.iter (printfn "%A")
     Console.WriteLine("BATTLESHIP")
     Console.WriteLine("  | 0 1 2 3 4 5 6 7 8 9 ")
     Console.WriteLine("--+-------------------- ")
@@ -16,6 +17,7 @@ let renderGame (state: GameState) =
         for x = 0 to 9 do
             let displayString =
                 match state.Grid.[y].[x].Hit, state.Grid.[y].[x].Contents with 
+                | false, ShipSection _ -> "S"
                 | false, _ -> " "
                 | true , Water -> "M"
                 | true , ShipSection _ -> "H"
