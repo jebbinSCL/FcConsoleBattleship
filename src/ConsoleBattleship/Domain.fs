@@ -1,6 +1,7 @@
 ﻿module Domain
 
 open System
+open System.ComponentModel
 
 type Ship = {
     Positions: (int * int) list
@@ -27,16 +28,55 @@ type GameState = {
 let generateRandomPosition (nextInt) = 
     (nextInt(),nextInt())
 
+
 let generateRandomShip (nextInt) (length: int) (name: string)  = 
     let startPos = generateRandomPosition nextInt 
     { Positions = [startPos]; Id = name}
+
+let gridSize = 10
+let rand = Random()
+let nextInt ()  =  rand.Next(0, gridSize)
+
+let clashes ships ship =
+
+    ////List.exists (List.exists List.contains _ fun s -> s.Positions ships) ship.Positions
+    //let clashFound = 
+    //    ships 
+    //    |> List.exists (fun createdShip -> 
+    //        ship.Positions 
+    //        |> List.exists(fun pos -> createdShip.Positions |> List.contains (pos)))
+
+    //let shipPositions = ships |> List.collect(fun ship -> ship.Positions) |> Set.ofList
+    ////let clashFoundTwo = ship.Positions |> List.exists (fun pos ->  shipPositions |> List.contains pos)
+    let shipPositions = ships |> List.collect(fun ship -> ship.Positions) |> Set.ofList
+    Set.intersect (shipPositions) (Set.ofList ship.Positions)  |> Seq.isEmpty
+
+let rec generateShips currentShips lengths = 
+    match lengths with
+    | [] -> currentShips
+    | nextLength::tail -> 
+        let ship = generateRandomShip nextInt nextLength "sdfoisdjf"
+        if clashes currentShips ship then
+            generateShips currentShips lengths
+        else
+            generateShips (ship::currentShips) tail
+    
+
+
+    //for(int i = 2; i < 5; i++){
+    // Ship myShip = generateShip
+    // while(Ship.clashes()){
+    //   myShip = generateShip
+    //}
+    // Ships.add(myShip);
+    //}
         
 let initialState () =
-    let gridSize = 10
-    let rand = Random()
-    let nextInt ()  =  rand.Next(0, gridSize)
+
 
     let generateShipInGrid = generateRandomShip nextInt
+
+    Array.init 
 
     let ships = 
         [ 
@@ -47,6 +87,8 @@ let initialState () =
             generateShipInGrid 1 "Random2"
             generateShipInGrid 1 "Random3"
         ] 
+        
+
     let grid = Array.init gridSize (fun _ -> Array.init gridSize (fun x -> {Hit = false; Contents = Water}))
     //TODO make functional then update domainTransitions
     // Talk about function first programming and functional - imperative spectrum 
