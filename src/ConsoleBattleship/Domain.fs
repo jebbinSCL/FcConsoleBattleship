@@ -25,79 +25,69 @@ type GameState = {
     LastShipSunk : Ship option
 }
 
-let generateRandomPosition (nextInt) = 
-    (nextInt(),nextInt())
-
-
-let generateRandomShip (nextInt) (length: int) (name: string)  = 
-    let startPos = generateRandomPosition nextInt 
-    { Positions = [startPos]; Id = name}
-
 let gridSize = 10
 let rand = Random()
 let nextInt ()  =  rand.Next(0, gridSize)
 
+let flipCoin heads tails =
+    if rand.NextDouble() <= 0.5 then
+        heads
+    else 
+        tails
+
+let nextTranslator () = 
+    let translateByX translateBy (x,y) = (x + translateBy, y)
+    let translateByY translateBy (x,y) = (x, y + translateBy)
+    flipCoin translateByX translateByY
+    
+let generateRandomPosition (nextInt) = 
+    (nextInt(),nextInt())
+
+let generateRandomShip (nextInt) (length: int) (name: string)  = 
+    let startPos = generateRandomPosition nextInt 
+    let translator = nextTranslator ()
+    let positions = List.init length (fun index -> translator (index-1) startPos)
+    { Positions = positions; Id = name}
+
 let clashes ships ship =
-
-    ////List.exists (List.exists List.contains _ fun s -> s.Positions ships) ship.Positions
-    //let clashFound = 
-    //    ships 
-    //    |> List.exists (fun createdShip -> 
-    //        ship.Positions 
-    //        |> List.exists(fun pos -> createdShip.Positions |> List.contains (pos)))
-
-    //let shipPositions = ships |> List.collect(fun ship -> ship.Positions) |> Set.ofList
-    ////let clashFoundTwo = ship.Positions |> List.exists (fun pos ->  shipPositions |> List.contains pos)
     let shipPositions = ships |> List.collect(fun ship -> ship.Positions) |> Set.ofList
-    Set.intersect (shipPositions) (Set.ofList ship.Positions)  |> Seq.isEmpty
+    Set.intersect (shipPositions) (Set.ofList ship.Positions)  |> Seq.isEmpty |> not
+
+let positionOutsideGrid (X, Y) =
+    X < 0 || X >= gridSize || Y < 0 || Y >= gridSize
+
+let shipOutsideGrid ship =
+    ship.Positions |> List.exists positionOutsideGrid   
+
+let shipIsInvalid ships ship = 
+    clashes ships ship || shipOutsideGrid ship
+
 
 let rec generateShips currentShips lengths = 
     match lengths with
     | [] -> currentShips
     | nextLength::tail -> 
         let ship = generateRandomShip nextInt nextLength "sdfoisdjf"
-        if clashes currentShips ship then
+        if shipIsInvalid currentShips ship then
             generateShips currentShips lengths
         else
             generateShips (ship::currentShips) tail
-    
-
-
-    //for(int i = 2; i < 5; i++){
-    // Ship myShip = generateShip
-    // while(Ship.clashes()){
-    //   myShip = generateShip
-    //}
-    // Ships.add(myShip);
-    //}
         
 let initialState () =
 
-
     let generateShipInGrid = generateRandomShip nextInt
 
-    Array.init 
-
-    let ships = 
-        [ 
-            //{ Positions = [(1, 1); (1, 2) ; (1, 3) ]; Id= "HMS Tom" };
-            //{ Positions = [(3, 2); (3, 3) ; (3, 4) ]; Id= "HMS Sinking-Hewitt" }
-            //{ Positions = [generateRandomPosition(gridSize) ]; Id= "Poor man's Shek" }
-            generateShipInGrid 1 "Random1"
-            generateShipInGrid 1 "Random2"
-            generateShipInGrid 1 "Random3"
-        ] 
-        
+    let ships = generateShips [] <| List.init 5 (fun _ -> rand.Next(1, 5))
+        //[ 
+        //    //{ Positions = [(1, 1); (1, 2) ; (1, 3) ]; Id= "HMS Tom" };
+        //    //{ Positions = [(3, 2); (3, 3) ; (3, 4) ]; Id= "HMS Sinking-Hewitt" }
+        //    //{ Positions = [generateRandomPosition(gridSize) ]; Id= "Poor man's Shek" }
+        //    generateShipInGrid 1 "Random1"
+        //    generateShipInGrid 1 "Random2"
+        //    generateShipInGrid 1 "Random3"
+        //]         
 
     let grid = Array.init gridSize (fun _ -> Array.init gridSize (fun x -> {Hit = false; Contents = Water}))
-    //TODO make functional then update domainTransitions
-    // Talk about function first programming and functional - imperative spectrum 
-    (*
-        POssible functional way of doing this: 
-        ships -> list of position and id (Or create map)
-        then init grid, and if position list contains the current position, use the corresponding id
-    *)
-    //Reminder: Below adds the ship sections to the grid to complete the initial state. 
     let placeShip (ship: Ship) = 
         let rec recer positions =
             match positions with
