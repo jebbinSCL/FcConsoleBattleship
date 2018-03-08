@@ -66,26 +66,17 @@ let shipIsInvalid ships ship =
 let rec generateShips currentShips lengths = 
     match lengths with
     | [] -> currentShips
-    | nextLength::tail -> 
-        let ship = generateRandomShip nextInt nextLength "sdfoisdjf"
+    | (nextLength,nextName)::tail -> 
+        let ship = generateRandomShip nextInt nextLength nextName
         if shipIsInvalid currentShips ship then
             generateShips currentShips lengths
         else
             generateShips (ship::currentShips) tail
         
 let initialState () =
-
-    let generateShipInGrid = generateRandomShip nextInt
-
-    let ships = generateShips [] <| List.init 5 (fun _ -> rand.Next(1, 5))
-        //[ 
-        //    //{ Positions = [(1, 1); (1, 2) ; (1, 3) ]; Id= "HMS Tom" };
-        //    //{ Positions = [(3, 2); (3, 3) ; (3, 4) ]; Id= "HMS Sinking-Hewitt" }
-        //    //{ Positions = [generateRandomPosition(gridSize) ]; Id= "Poor man's Shek" }
-        //    generateShipInGrid 1 "Random1"
-        //    generateShipInGrid 1 "Random2"
-        //    generateShipInGrid 1 "Random3"
-        //]         
+    //let ships = generateShips [] <| List.init 5 (fun _ -> rand.Next(1, 5), )       
+    let shipMetaData = [(2,"DUO"); (3, "TRIDENT") ; (3,"TRI"); (4,"QUADSOMETHING"); (5,"ROYAL")]
+    let ships = generateShips [] shipMetaData  
 
     let grid = Array.init gridSize (fun _ -> Array.init gridSize (fun x -> {Hit = false; Contents = Water}))
     let placeShip (ship: Ship) = 
